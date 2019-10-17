@@ -1,0 +1,7 @@
+npn install -g now
+now login
+now 
+da la direccion
+
+
+https://zeit.co/
