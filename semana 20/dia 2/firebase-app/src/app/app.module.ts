@@ -15,6 +15,9 @@ import { AngularFireModule } from '@angular/fire';
 import { environment } from './../environments/environment'
 
 import { AngularFireDatabaseModule } from '@angular/fire/database'; //luego pasar a los import
+
+//modulos necesarios para forualarios reactivos
+import {FormsModule, ReactiveFormsModule } from '@angular/forms'
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +33,9 @@ import { AngularFireDatabaseModule } from '@angular/fire/database'; //luego pasa
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireDatabaseModule                 //se importa aqui de arriba
+    AngularFireDatabaseModule,
+    FormsModule,
+    ReactiveFormsModule                //se importa aqui de arriba
   ],
   providers: [],
   bootstrap: [AppComponent]

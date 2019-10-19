@@ -1,1 +1,83 @@
-<p>realtime works!</p>
+<!-- <p>realtime works!</p>
+<div *ngIf="listaUsuarios">
+LLEGARON
+</div>
+<div *ngIf="!listaUsuarios">
+    =(
+</div> -->
+
+<section class="container">
+    <div *ngIf="!listaUsuarios">
+        Cargando ....
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card ">
+              
+              <div class="card-header">
+                Formulario de Creacion de Usuarios
+              </div>
+              <div class="card-body">
+                  <form [formGroup]="formulario" (ngSubmit)="onSubmit()">
+                      <div class="form-group">
+                          <label for="">Nombre</label>
+                          <input type="text" class="form-control" placeholder="Ingrese su Nombre" formControlName="campo_nombre">
+                          <small class="text-danger" *ngIf="!formulario.get('campo_nombre').valid && !formulario.get('campo_nombre').pristine">El campo nombre es obligatorio</small>
+                      </div>
+                      <div class="form-group">
+                        <label for="">Apellidos</label>
+                        <input type="text" class="form-control" placeholder="Ingrese su Apellido" formControlName="campo_apellido">
+                      </div>
+                      <div class="form-group">
+                        <label for="">imagen</label>
+                        <input type="text" class="form-control" placeholder="Selecciona una Imagen " formControlName="campo_imagen">
+                      </div>
+                      <div class="form-group">
+                            <label for="">Email</label>
+                            <input type="text" class="form-control" placeholder="Ingrese su Email" formControlName="campo_email">
+
+                      </div>
+                      <div class="form-group">
+                        <button class="btn btn-block btn-primary">
+                            <i class="fas fa-save mr-2   "></i>
+                            Crear Usuario
+                        </button>
+                      </div>
+
+                  </form>
+              </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ID</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Imagen</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let usu of listaUsuarios; let i=index">
+                        <th>{{i+1}}</th>
+                        <td>{{usu.id}}</td>
+                        <td>{{usu.nombre}}</td>
+                        <td>{{usu.apellido}}</td>
+                        <td>
+                            <img [src]="usu.imagen" width="100">
+                        </td>
+                        <td>
+                                <button  class="btn btn-info" (click)="abrirModalEditar(usu.id)"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                <button  class="btn btn-danger ml-2" (click)="eliminarUsuario(usu.id)"> <i class="fas fa-trash-alt    "></i></button>
+                        </td>
+                        <!-- <td><img src="{{item.imagen}}" alt=""></td> -->  
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+</section>
