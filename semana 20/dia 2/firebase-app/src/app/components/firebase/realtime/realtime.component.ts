@@ -5,18 +5,30 @@ import Swal from 'sweetalert2';
 // importando clases para formulrios reactivos
 import { FormGroup, FormControl, Validators } from '@angular/forms'
 import { Logs } from 'selenium-webdriver';
+
+import{ AngularFireStorage} from '@angular/fire/storage';
+// import { url } from 'inspector';
 @Component({
   selector: 'app-realtime',
   templateUrl: './realtime.component.html',
   styleUrls: ['./realtime.component.css']
 })
 export class RealtimeComponent implements OnInit {
+
+  //VARIABLES PARA LA CARGA DE IMAGENES
+  imagePath;
+  imgUrl;
+
+  //VARIABLES PARA LA CARGA DE IMAGENES
+
   // const Swal = require('sweetalert2')
+  modoTabla:Boolean=true;
   refUsuarios:DatabaseReference;
   listaUsuarios:Array<any>;
   formulario:FormGroup;
   constructor(private _srealtime:AngularFireDatabase,
-              private _szone:NgZone) { 
+              private _szone:NgZone,
+              private _storage: AngularFireStorage) { 
     this.refUsuarios=this._srealtime.database.ref("usuarios");
     //INICIALIZANDO EL FORMULARIO REACTIVO
     this.formulario=new FormGroup(
@@ -24,7 +36,7 @@ export class RealtimeComponent implements OnInit {
       {
         "campo_nombre":new FormControl('',Validators.required),
         "campo_apellido":new FormControl('',Validators.required),
-        "campo_imagen":new FormControl('',Validators.required),
+        "campo_imagen":new FormControl('null',Validators.required),
         "campo_email":new FormControl('',[
                                           Validators.required,
                                           Validators.pattern("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$")
@@ -33,13 +45,65 @@ export class RealtimeComponent implements OnInit {
     );
   }
   // elemento submit del forulario reactivo
-  onSubmit(){
+  onSubmit(miimg){
+    console.log(miimg.files[0]);
+    
+    Swal.fire({
+      title:'Espere',
+      text:'Estamos creando el registro',
+      type:'info',
+      showConfirmButton:false,
+      allowOutsideClick:false
+    })
     console.log(this.formulario);
     //OBTENER EL OBJETO USUARIO DEL FORMUALRIO
     console.log(this.formulario.value);
     // OBTENER LA REFERENCIA DEL IMPUT EMAIL
     this.formulario.get('campo_email');
     console.log(this.formulario.get('campo_email').value);
+    //sUBIR IMG A FIREBASE
+
+    //AFMAR EL OBJETO PARA ENVIAR A FIREBASE
+    // 1.- CREAR UN ID A PARTIR DE LA REFERENCIA AL NODO USUARIOS
+    let key=this.refUsuarios.push().key;
+
+    let archivo=miimg.files[0];
+    const tarea=this._storage.upload('key',archivo);
+    tarea.then(()=>{
+      //en este scope la img ya c subio con el nombre del key original
+      //ahora obtendremos la url
+      this._storage.ref(key).getDownloadURL().subscribe((url_imagen)=>{
+        // 2. CREAR UNA REFERENCIA AL NODO 'USUARIOS'=>'KEY'
+      let refkey=this.refUsuarios.child(key);
+      // 3. ARMAR EL JSON
+      // 4. ENVIAR EL OBJETO A SU REFERENCIA
+      refkey.set({
+        nombre:this.formulario.get('campo_nombre').value,
+        apellido:this.formulario.get('campo_apellido').value,
+        imagen:url_imagen,
+        email:this.formulario.get('campo_email').value
+      }).then(()=>{
+        Swal.fire({
+          position: 'center',
+          type: 'success',
+          title: 'Datos grabados correctamente',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      });
+      // console.log(key);
+      
+        //RESET blanquea los campos
+        this.formulario.reset();
+        //si quiero que se cargue algun texto por defecto
+        // this.formulario.reset({
+        //   "campo_imagen":'sin-image'
+        // })
+      })
+      })
+
+    
+    
     
   }
   ngOnInit() {
@@ -122,6 +186,18 @@ export class RealtimeComponent implements OnInit {
     // this.refUsuarios.child(id).remove().then(()=>{
     //   console.log("Registro Borrado Correctamente");
     // });
+    
+  }
+  previsualizarFoto(event){
+    console.log(event);
+    let archivo=event.target.files[0];
+    let reader=new FileReader();
+    // this.imagePath=event.target.files;
+    reader.readAsDataURL(archivo);
+    reader.onload=()=>{
+      this.imgUrl=reader.result;
+      console.log(this.imgUrl);
+    }
     
   }
 

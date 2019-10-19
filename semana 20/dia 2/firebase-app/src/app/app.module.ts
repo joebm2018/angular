@@ -18,6 +18,8 @@ import { AngularFireDatabaseModule } from '@angular/fire/database'; //luego pasa
 
 //modulos necesarios para forualarios reactivos
 import {FormsModule, ReactiveFormsModule } from '@angular/forms'
+
+import { AngularFireStorageModule } from '@angular/fire/storage'
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,7 +37,8 @@ import {FormsModule, ReactiveFormsModule } from '@angular/forms'
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
     FormsModule,
-    ReactiveFormsModule                //se importa aqui de arriba
+    ReactiveFormsModule,                //se importa aqui de arriba
+    AngularFireStorageModule
   ],
   providers: [],
   bootstrap: [AppComponent]
